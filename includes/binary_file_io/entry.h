@@ -64,8 +64,10 @@ void Entry::set_data(string data)
 
 std::ostream& operator << (std::ostream& outs, const Entry& print_me)
 {
-    outs << "key:" << print_me._key << ",size:" << print_me._key_size << endl;
-    outs << "data:" << print_me._data << ",size:" << print_me._data_size << endl;
+    outs << "key:" << print_me._key << endl;
+    cout << "key size:" << print_me._key_size << endl;
+    outs << "data:" << print_me._data << endl;
+    cout << "data size:" << print_me._data_size << endl;
     outs << "operation:";
     if(print_me._operation == INSERT) outs << "INSERT" << endl;
     if(print_me._operation == DELETE) outs << "DELETE" << endl;

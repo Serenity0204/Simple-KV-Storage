@@ -68,5 +68,11 @@ ADD_EXECUTABLE(test_hash
     ${SOURCE_FILES}
 )
 
+ADD_EXECUTABLE(test_fileIO
+    _tests/_test_files/test_fileIO.cpp
+    ${SOURCE_FILES}
+)
+
 TARGET_LINK_LIBRARIES(test_avl gtest)
 TARGET_LINK_LIBRARIES(test_hash gtest)
+TARGET_LINK_LIBRARIES(test_fileIO gtest)
