@@ -5,7 +5,6 @@
 #include <string>
 using namespace std;
 
-
 enum Operations
 {
     DELETE,
@@ -27,7 +26,7 @@ public:
     ~Entry();
     void set_key(string key);
     void set_data(string data);
-    friend std::ostream& operator << (std::ostream& outs, const Entry& print_me);
+    friend std::ostream& operator<<(std::ostream& outs, const Entry& print_me);
 };
 
 Entry::Entry()
@@ -62,15 +61,15 @@ void Entry::set_data(string data)
     this->_data_size = data.length();
 }
 
-std::ostream& operator << (std::ostream& outs, const Entry& print_me)
+std::ostream& operator<<(std::ostream& outs, const Entry& print_me)
 {
     outs << "key:" << print_me._key << endl;
     cout << "key size:" << print_me._key_size << endl;
     outs << "data:" << print_me._data << endl;
     cout << "data size:" << print_me._data_size << endl;
     outs << "operation:";
-    if(print_me._operation == INSERT) outs << "INSERT" << endl;
-    if(print_me._operation == DELETE) outs << "DELETE" << endl;
+    if (print_me._operation == INSERT) outs << "INSERT" << endl;
+    if (print_me._operation == DELETE) outs << "DELETE" << endl;
     return outs;
 }
 

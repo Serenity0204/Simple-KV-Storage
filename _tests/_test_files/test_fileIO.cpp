@@ -1,25 +1,21 @@
 #include "gtest/gtest.h"
-#include <iostream>
 #include <iomanip>
-#include <vector>
+#include <iostream>
 #include <string>
+#include <vector>
 //------------------------------------------------------------------------------
-//Files we are testing:
+// Files we are testing:
 #include "../../includes/binary_file_io/binary_file_io.h"
-
 
 //------------------------------------------------------------------------------
 
 using namespace std;
 
-
-
-bool test_fileIO1(bool debug=false)
+bool test_fileIO1(bool debug = false)
 {
     remove("simple_kv_db.data");
     BinaryFileIO IO;
-    vector<Entry> entries = 
-    {
+    vector<Entry> entries = {
         {"hello", "world", INSERT},
         {"apple", "banana", DELETE},
         {"red", "green", INSERT},
@@ -35,38 +31,33 @@ bool test_fileIO1(bool debug=false)
 
     // write entries to file
     vector<long long> indexes;
-    for (const auto& entry : entries) 
+    for (const auto& entry : entries)
     {
         long long index = IO.write_file(entry);
         indexes.push_back(index);
-        if(debug) cout << "index:" << index << endl;
+        if (debug) cout << "index:" << index << endl;
     }
 
     // read entries from file
-    for (const auto& index : indexes) 
+    for (const auto& index : indexes)
     {
         Entry entry = IO.read_file(index);
-        if(debug) cout << entry << endl;
+        if (debug) cout << entry << endl;
     }
 
     ifstream in;
 
     in.open("simple_kv_db.data");
-    if(in.good()) 
+    if (in.good())
     {
-        if(debug) cout << "removed done" << endl;
+        if (debug) cout << "removed done" << endl;
         remove("simple_kv_db.data");
     }
     in.close();
     return true;
 }
 
-
-
-
-
 const bool debug = false;
-
 
 TEST(TEST_FILE_IO, TestFileIO1)
 {
@@ -74,10 +65,10 @@ TEST(TEST_FILE_IO, TestFileIO1)
     EXPECT_EQ(true, success);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-  ::testing::InitGoogleTest(&argc, argv);
-  std::cout<<"\n\n----------running test_fileIO.cpp---------\n\n"<<std::endl;
-  return RUN_ALL_TESTS();
+    ::testing::InitGoogleTest(&argc, argv);
+    std::cout << "\n\n----------running test_fileIO.cpp---------\n\n"
+              << std::endl;
+    return RUN_ALL_TESTS();
 }
-

@@ -1,18 +1,18 @@
 #ifndef BINARY_FILE_IO_H
 #define BINARY_FILE_IO_H
 
-#include <iostream>
-#include <fstream>
-#include <string>
 #include "entry.h"
+#include <fstream>
+#include <iostream>
+#include <string>
 using namespace std;
-
 
 class BinaryFileIO
 {
 private:
     static const string DB_FILE_PATH;
     static const string MERGE_FILE_PATH;
+
 public:
     BinaryFileIO();
     ~BinaryFileIO();
@@ -26,14 +26,14 @@ const string BinaryFileIO::MERGE_FILE_PATH = "simple_kv_db.merge";
 BinaryFileIO::BinaryFileIO()
 {
     ifstream in(BinaryFileIO::DB_FILE_PATH);
-    if(!in.good())
+    if (!in.good())
     {
         ofstream out(BinaryFileIO::DB_FILE_PATH, ios::binary);
         out.close();
     }
     in.close();
     in.open(BinaryFileIO::MERGE_FILE_PATH);
-    if(!in.good())
+    if (!in.good())
     {
         ofstream out(BinaryFileIO::MERGE_FILE_PATH, ios::binary);
         out.close();
@@ -44,7 +44,6 @@ BinaryFileIO::BinaryFileIO()
 BinaryFileIO::~BinaryFileIO()
 {
 }
-
 
 long long BinaryFileIO::write_file(const Entry& entry)
 {
@@ -59,15 +58,14 @@ long long BinaryFileIO::write_file(const Entry& entry)
     int key_size = entry._key_size + 1;
     int data_size = entry._data_size + 1;
 
-
-    // operation,key size,data size 
+    // operation,key size,data size
     file.write(reinterpret_cast<const char*>(&entry._operation), sizeof(entry._operation));
     file.write(reinterpret_cast<const char*>(&key_size), sizeof(key_size));
     file.write(reinterpret_cast<const char*>(&data_size), sizeof(data_size));
 
     // write the key and data strings to the file.
     file.write(entry._key.c_str(), key_size);
-    file.write(entry._data.c_str(), data_size);    
+    file.write(entry._data.c_str(), data_size);
     file.close();
     return index;
 }
@@ -98,20 +96,16 @@ Entry BinaryFileIO::read_file(long long index)
     entry._data = data;
 
     // exclude null char
-    if(entry._key_size > 0) entry._key_size--;
-    if(entry._data_size > 0) entry._data_size--;
+    if (entry._key_size > 0) entry._key_size--;
+    if (entry._data_size > 0) entry._data_size--;
 
     // delete buffer
     delete[] key;
     delete[] data;
 
     file.close();
-    
+
     return entry;
 }
-
-
-
-
 
 #endif // BINARY_FILE_IO_H
