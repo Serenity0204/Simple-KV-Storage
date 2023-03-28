@@ -2,6 +2,8 @@
 #define SIMPLE_KV_H
 #include "binary_file_io/binary_file_io.h"
 #include "hash_table/hash_table.h"
+#include "serializer/serializer.h"
+using namespace std;
 
 template <class T>
 class Simple_KV

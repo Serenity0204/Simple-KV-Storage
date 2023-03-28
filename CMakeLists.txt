@@ -73,6 +73,12 @@ ADD_EXECUTABLE(test_fileIO
     ${SOURCE_FILES}
 )
 
+ADD_EXECUTABLE(test_serializer
+    _tests/_test_files/test_serializer.cpp
+    ${SOURCE_FILES}
+)
+
 TARGET_LINK_LIBRARIES(test_avl gtest)
 TARGET_LINK_LIBRARIES(test_hash gtest)
 TARGET_LINK_LIBRARIES(test_fileIO gtest)
+TARGET_LINK_LIBRARIES(test_serializer gtest)
