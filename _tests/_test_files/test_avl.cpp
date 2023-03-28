@@ -67,10 +67,56 @@ bool test_avl_load1(bool debug = false)
             if (!isAVL(avl.root())) return false;
         }
     }
-    // avl.clear_all();
     if (avl.empty()) return true;
     return false;
 }
+
+bool test_avl_size1(bool debug = false)
+{
+    AVL<int> avl;
+    for (int i = 0; i < 1000; ++i)
+    {
+        avl.insert(i);
+        binary_tree_node<int>* find = avl.search(i);
+        if (find == nullptr) return false;
+        if (find->data() != i) return false;
+        if (!isAVL(avl.root())) return false;
+    }
+    if (debug)
+    {
+        cout << avl << endl;
+    }
+    for (int i = 0; i < 200; ++i)
+    {
+        avl.erase(i);
+        binary_tree_node<int>* find = avl.search(i);
+        if (find != nullptr) return false;
+        if (!isAVL(avl.root())) return false;
+    }
+    EXPECT_EQ(avl.size(), 800);
+    avl.clear_all();
+    if (avl.empty()) return true;
+
+    return false;
+}
+
+bool test_avl_size2(bool debug = false)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = 10;
+    AVL<int> avl(arr, size);
+    if (debug)
+    {
+        cout << avl << endl;
+    }
+    EXPECT_EQ(avl.size(), size);
+    avl.clear_all();
+    if (avl.empty()) return true;
+    return false;
+}
+
+
+
 
 const bool debug = false;
 TEST(TEST_AVL_LOAD, TestAVLLoad1)
@@ -78,6 +124,19 @@ TEST(TEST_AVL_LOAD, TestAVLLoad1)
     bool success = test_avl_load1(debug);
     EXPECT_EQ(true, success);
 }
+
+TEST(TEST_AVL_SIZE, TestAVLSize1)
+{
+    bool success = test_avl_size1(debug);
+    EXPECT_EQ(true, success);
+}
+
+TEST(TEST_AVL_SIZE, TestAVLSize2)
+{
+    bool success = test_avl_size2(debug);
+    EXPECT_EQ(true, success);
+}
+
 
 int main(int argc, char** argv)
 {

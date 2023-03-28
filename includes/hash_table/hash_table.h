@@ -34,7 +34,6 @@ public:
     const V& operator[](K key) const;
 
     std::size_t size() const { return _size; }
-    std::size_t capacity() const { return HashTable<K, V>::CAPACITY; }
     // OVERLOAD OPERATOR FUNCTIONS
     template <class X, class Y>
     friend std::ostream& operator<<(std::ostream& outs, const HashTable<X, Y>& hash);
