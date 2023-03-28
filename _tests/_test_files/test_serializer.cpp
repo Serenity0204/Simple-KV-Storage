@@ -52,14 +52,13 @@ public:
 // test custom type
 bool test_serializer1(bool debug = false)
 {
-    Serializer<TestObj> serializer;
     vector<TestObj> objects;
     vector<string> strings;
     int size = 200;
     for (int i = 0; i < size; ++i)
     {
         TestObj obj = TestObj(i);
-        string serialized = serializer.serialize(obj);
+        string serialized = Serializer<TestObj>::serialize(obj);
         objects.push_back(obj);
         strings.push_back(serialized);
     }
@@ -67,7 +66,7 @@ bool test_serializer1(bool debug = false)
     EXPECT_TRUE(same_size);
     for (int i = 0; i < size; ++i)
     {
-        TestObj obj = serializer.deserialize(strings[i]);
+        TestObj obj = Serializer<TestObj>::deserialize(strings[i]);
         if (obj != objects[i])
         {
             if (debug)
@@ -86,7 +85,6 @@ bool test_serializer1(bool debug = false)
 // test primative types double
 bool test_serializer2(bool debug = false)
 {
-    Serializer<double> serializer;
     vector<double> objects;
     vector<string> strings;
 
@@ -94,7 +92,7 @@ bool test_serializer2(bool debug = false)
     for (double i = 0; i < size; i += 0.5)
     {
         double obj = i;
-        string serialized = serializer.serialize(obj);
+        string serialized = Serializer<double>::serialize(obj);
         objects.push_back(obj);
         strings.push_back(serialized);
     }
@@ -102,7 +100,7 @@ bool test_serializer2(bool debug = false)
     EXPECT_TRUE(same_size);
     for (int i = 0; i < size; ++i)
     {
-        double obj = serializer.deserialize(strings[i]);
+        double obj = Serializer<double>::deserialize(strings[i]);
         if (obj != objects[i])
         {
             if (debug)

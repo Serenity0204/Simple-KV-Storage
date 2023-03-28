@@ -13,8 +13,8 @@ struct Serializer
 public:
     Serializer() {}
     ~Serializer() {}
-    string serialize(const T& data);
-    T deserialize(const string& data);
+    static string serialize(const T& data);
+    static T deserialize(const string& data);
 };
 
 template <class T>
