@@ -5,61 +5,63 @@
 #include "serializer/serializer.h"
 using namespace std;
 
-template <class T>
+template <class K, class V>
 class Simple_KV
 {
 private:
     BinaryFileIO _io;
-    HashTable<int> _table;
-    Serializer<T> _serializer;
+    HashTable<K, int> _table;
+    Serializer<K> _key_serializer;
+    Serializer<V> _value_serializer;
 
 public:
     Simple_KV();
     ~Simple_KV();
-    void put(string key, T value);
-    T get(string key);
-    bool exist(string key);
-    void remove(string key);
+    void put(K key, V value);
+    V get(K key);
+    bool exist(K key);
+    void remove(K key);
     void display();
 };
 
-template <class T>
-Simple_KV<T>::Simple_KV()
+template <class K, class V>
+Simple_KV<K, V>::Simple_KV()
 {
     this->_io = BinaryFileIO();
-    this->_table = HashTable<int>();
-    this->_serializer = Serializer<T>();
+    this->_table = HashTable<K, int>();
+    this->_key_serializer = Serializer<K>();
+    this->_key_serializer = Serializer<V>();
 }
 
-template <class T>
-Simple_KV<T>::~Simple_KV()
+template <class K, class V>
+Simple_KV<K, V>::~Simple_KV()
 {
 }
 
-template <class T>
-void Simple_KV<T>::put(string key, T value)
+template <class K, class V>
+void Simple_KV<K, V>::put(K key, V value)
 {
 }
 
-template <class T>
-T Simple_KV<T>::get(string key)
+template <class K, class V>
+V Simple_KV<K, V>::get(K key)
 {
 }
 
-template <class T>
-bool Simple_KV<T>::exist(string key)
+template <class K, class V>
+bool Simple_KV<K, V>::exist(K key)
 {
     if (!this->_table.count(key)) return false;
     return true;
 }
 
-template <class T>
-void Simple_KV<T>::remove(string key)
+template <class K, class V>
+void Simple_KV<K, V>::remove(K key)
 {
 }
 
-template <class T>
-void Simple_KV<T>::display()
+template <class K, class V>
+void Simple_KV<K, V>::display()
 {
 }
 

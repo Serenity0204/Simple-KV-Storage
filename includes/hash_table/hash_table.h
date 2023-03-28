@@ -11,7 +11,7 @@
 
 using namespace std;
 
-template <class T>
+template <class K, class V>
 class HashTable
 {
 public:
@@ -20,76 +20,79 @@ public:
     static const std::size_t CAPACITY = 811;
     // CONSTRUCTORS AND DESTRUCTOR
     HashTable();
-    HashTable(const HashTable& source);
+    HashTable(const HashTable<K, V>& source);
     ~HashTable();
-    HashTable<T>& operator=(const HashTable<T>& source);
+    HashTable<K, V>& operator=(const HashTable<K, V>& source);
     // MODIFICATION MEMBER FUNCTIONS
-    void insert(string key, T value);
-    void remove(string key);
+    void insert(K key, V value);
+    void remove(K key);
     // CONSTANT MEMBER FUNCTIONS
-    bool count(string key) const;
+    bool count(K key) const;
     void clear();
     // subscript operator
-    T& operator[](string key);
-    const T& operator[](string key) const;
+    V& operator[](K key);
+    const V& operator[](K key) const;
 
     std::size_t size() const { return _size; }
-    std::size_t capacity() const { return HashTable<T>::CAPACITY; }
+    std::size_t capacity() const { return HashTable<K, V>::CAPACITY; }
     // OVERLOAD OPERATOR FUNCTIONS
-    template <class U>
-    friend std::ostream& operator<<(std::ostream& outs, const HashTable<U>& hash);
+    template <class X, class Y>
+    friend std::ostream& operator<<(std::ostream& outs, const HashTable<X, Y>& hash);
 
 private:
     // MEMBER VARIABLES
-    AVL<HashRecord<T>> _data[CAPACITY];
+    AVL<HashRecord<K, V>> _data[CAPACITY];
     std::size_t _size;
     // HELPER MEMBER FUNCTION
-    std::size_t _hash(string key) const
+    std::size_t _hash(K key) const
     {
-        std::hash<std::string> h;
-        return h(key) % HashTable<T>::CAPACITY;
+        return std::hash<K>()(key) % HashTable<K, V>::CAPACITY;
     }
-    void _find(string key, bool& found, HashRecord<T>& result) const;
+    void _find(K key, bool& found, HashRecord<K, V>& result) const;
     void _print_hash(std::ostream& outs = std::cout) const;
 };
 
 // Implementation MEMBER FUNCTIONS
 
 // TODO
-template <class T>
-HashTable<T>::HashTable()
+template <class K, class V>
+HashTable<K, V>::HashTable()
 {
-    for (int i = 0; i < HashTable<T>::CAPACITY; ++i) this->_data[i] = AVL<HashRecord<T>>();
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i) this->_data[i] = AVL<HashRecord<K, V>>();
     this->_size = 0;
 }
 
-template <class T>
-HashTable<T>::HashTable(const HashTable<T>& source)
+template <class K, class V>
+HashTable<K, V>::HashTable(const HashTable<K, V>& source)
 {
     this->_size = source._size;
-    for (int i = 0; i < HashTable<T>::CAPACITY; ++i) this->_data[i] = source._data[i];
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i) this->_data[i] = source._data[i];
 }
 
-template <class T>
-HashTable<T>::~HashTable() {}
+template <class K, class V>
+HashTable<K, V>::~HashTable() {}
 
-template <class T>
-HashTable<T>& HashTable<T>::operator=(const HashTable<T>& source)
+template <class K, class V>
+HashTable<K, V>& HashTable<K, V>::operator=(const HashTable<K, V>& source)
 {
     if (this == &source) return *this;
     this->_size = source._size;
-    for (int i = 0; i < HashTable<T>::CAPACITY; ++i) this->_data[i] = source._data[i];
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i) this->_data[i] = source._data[i];
     return *this;
 }
 
 // MODIFICATION MEMBER FUNCTIONS
-template <class T>
-void HashTable<T>::insert(string key, T value)
+template <class K, class V>
+void HashTable<K, V>::insert(K key, V value)
 {
     std::size_t index = this->_hash(key);
     bool found = false;
-    HashRecord<T> entry(key);
+    HashRecord<K, V> entry(key);
     this->_find(key, found, entry);
+
+    // set the insert entry to have the key and value we want
+    entry._key = key;
+    entry._value = value;
     // if not found, then just insert
     if (!found)
     {
@@ -102,12 +105,12 @@ void HashTable<T>::insert(string key, T value)
     this->_data[index].insert(entry);
 }
 
-template <class T>
-void HashTable<T>::remove(string key)
+template <class K, class V>
+void HashTable<K, V>::remove(K key)
 {
     bool found = false;
     std::size_t index = this->_hash(key);
-    HashRecord<T> temp(key);
+    HashRecord<K, V> temp(key);
     this->_find(key, found, temp);
     if (!found) return;
     // else found
@@ -116,63 +119,63 @@ void HashTable<T>::remove(string key)
 }
 // CONSTANT MEMBER FUNCTIONS
 
-template <class T>
-bool HashTable<T>::count(string key) const
+template <class K, class V>
+bool HashTable<K, V>::count(K key) const
 {
     bool found = false;
-    HashRecord<T> temp(key);
+    HashRecord<K, V> temp(key);
     this->_find(key, found, temp);
     return found;
 }
 
-template <class T>
-T& HashTable<T>::operator[](string key)
+template <class K, class V>
+V& HashTable<K, V>::operator[](K key)
 {
     std::size_t index = this->_hash(key);
-    binary_tree_node<HashRecord<T>>* find = this->_data[index].search(HashRecord<T>(key));
-    if (find == nullptr) this->insert(key, T());
+    binary_tree_node<HashRecord<K, V>>* find = this->_data[index].search(HashRecord<K, V>(key));
+    if (find == nullptr) this->insert(key, V());
     assert(this->count(key));
-    return this->_data[index].search(HashRecord<T>(key))->data().item;
+    return this->_data[index].search(HashRecord<K, V>(key))->data()._value;
 }
 
-template <class T>
-const T& HashTable<T>::operator[](string key) const
+template <class K, class V>
+const V& HashTable<K, V>::operator[](K key) const
 {
     std::size_t index = this->_hash(key);
-    binary_tree_node<HashRecord<T>>* find = this->_data[index].search(HashRecord<T>(key));
+    binary_tree_node<HashRecord<K, V>>* find = this->_data[index].search(HashRecord<K, V>(key));
     assert(find != nullptr);
-    return this->_data[index].search(HashRecord<T>(key))->data().item;
+    return this->_data[index].search(HashRecord<K, V>(key))->data()._value;
 }
 
-template <class T>
-void HashTable<T>::clear()
+template <class K, class V>
+void HashTable<K, V>::clear()
 {
     this->_size = 0;
-    for (int i = 0; i < HashTable<T>::CAPACITY; ++i) this->_data[i] = AVL<HashRecord<T>>();
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i) this->_data[i] = AVL<HashRecord<K, V>>();
 }
 
-template <class T>
-void HashTable<T>::_find(string key, bool& found, HashRecord<T>& result) const
+template <class K, class V>
+void HashTable<K, V>::_find(K key, bool& found, HashRecord<K, V>& result) const
 {
     std::size_t index = this->_hash(key);
     found = false;
-    binary_tree_node<HashRecord<T>>* find = this->_data[index].search(HashRecord<T>(key));
+    binary_tree_node<HashRecord<K, V>>* find = this->_data[index].search(HashRecord<K, V>(key));
     if (find == nullptr) return;
     result = find->data();
     found = true;
 }
 
-template <class U>
-std::ostream& operator<<(std::ostream& outs, const HashTable<U>& hash)
+template <class X, class Y>
+std::ostream& operator<<(std::ostream& outs, const HashTable<X, Y>& hash)
 {
     hash._print_hash(outs);
     return outs;
 }
 
-template <class T>
-void HashTable<T>::_print_hash(std::ostream& outs) const
+template <class K, class V>
+void HashTable<K, V>::_print_hash(std::ostream& outs) const
 {
-    for (int i = 0; i < HashTable<T>::CAPACITY; i++)
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; i++)
     {
         outs << '[' << std::setfill('0') << std::setw(3) << i << "] ";
         if (this->_data[i].root() == nullptr) outs << "empty";

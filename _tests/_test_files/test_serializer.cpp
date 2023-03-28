@@ -11,6 +11,8 @@
 
 using namespace std;
 
+// testing helpers
+//------------------------------------------------------------------------------
 class TestObj
 {
 private:
@@ -45,6 +47,7 @@ public:
         return !(left == right);
     }
 };
+//------------------------------------------------------------------------------
 
 // test custom type
 bool test_serializer1(bool debug = false)
