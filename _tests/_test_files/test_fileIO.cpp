@@ -30,18 +30,19 @@ bool test_fileIO1(bool debug = false)
     };
 
     // write entries to file
-    vector<long long> indexes;
+    vector<long long> indices;
     for (const auto& entry : entries)
     {
         long long index = IO.write_file(entry);
-        indexes.push_back(index);
+        indices.push_back(index);
         if (debug) cout << "index:" << index << endl;
     }
 
     // read entries from file
-    for (const auto& index : indexes)
+    for(int i = 0; i < indices.size(); ++i)
     {
-        Entry entry = IO.read_file(index);
+        Entry entry = IO.read_file(indices[i]);
+        if(entry != entries[i]) return false;
         if (debug) cout << entry << endl;
     }
 
@@ -57,6 +58,48 @@ bool test_fileIO1(bool debug = false)
     return true;
 }
 
+bool test_fileIO2(bool debug = false)
+{
+    remove("simple_kv_db.data");
+    BinaryFileIO IO;
+    vector<Entry> entries = {
+        {"1", "1", INSERT},
+        {"2", "2", DELETE},
+        {"3", "3", INSERT},
+        {"4", "4", DELETE},
+    };
+
+    // write entries to file
+    vector<long long> indices;
+    for (const auto& entry : entries)
+    {
+        long long index = IO.write_file(entry);
+        indices.push_back(index);
+        if (debug) cout << "index:" << index << endl;
+    }
+
+    // read entries from file
+    for(int i = 0; i < indices.size(); ++i)
+    {
+        Entry entry = IO.read_file(indices[i]);
+        if(entry != entries[i]) return false;
+        if (debug) cout << entry << endl;
+    }
+
+    ifstream in;
+
+    in.open("simple_kv_db.data");
+    if (in.good())
+    {
+        if (debug) cout << "removed done" << endl;
+        remove("simple_kv_db.data");
+    }
+    in.close();
+    return true;
+}
+
+
+
 const bool debug = false;
 
 TEST(TEST_FILE_IO, TestFileIO1)
@@ -64,7 +107,11 @@ TEST(TEST_FILE_IO, TestFileIO1)
     bool success = test_fileIO1(debug);
     EXPECT_EQ(true, success);
 }
-
+TEST(TEST_FILE_IO, TestFileIO2)
+{
+    bool success = test_fileIO2(debug);
+    EXPECT_EQ(true, success);
+}
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

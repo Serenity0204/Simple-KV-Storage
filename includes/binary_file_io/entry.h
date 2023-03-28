@@ -26,6 +26,10 @@ public:
     ~Entry();
     void set_key(string key);
     void set_data(string data);
+
+    // friends
+    friend bool operator == (const Entry& left, const Entry& right);
+    friend bool operator != (const Entry& left, const Entry& right);
     friend std::ostream& operator<<(std::ostream& outs, const Entry& print_me);
 };
 
@@ -73,4 +77,14 @@ std::ostream& operator<<(std::ostream& outs, const Entry& print_me)
     return outs;
 }
 
+bool operator == (const Entry& left, const Entry& right)
+{
+    bool data_check = left._data == right._data;
+    bool key_check = left._key == right._key;
+    return data_check && key_check;
+}
+bool operator != (const Entry& left, const Entry& right)
+{
+    return !(left == right);
+}
 #endif // ENTRY_H
