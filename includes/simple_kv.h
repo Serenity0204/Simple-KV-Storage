@@ -11,6 +11,7 @@ class Simple_KV
 private:
     BinaryFileIO _io;
     HashTable<int> _table;
+    Serializer<T> _serializer;
 
 public:
     Simple_KV();
@@ -27,6 +28,7 @@ Simple_KV<T>::Simple_KV()
 {
     this->_io = BinaryFileIO();
     this->_table = HashTable<int>();
+    this->_serializer = Serializer<T>();
 }
 
 template <class T>
