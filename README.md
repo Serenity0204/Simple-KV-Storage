@@ -16,4 +16,6 @@ Can be found in https://github.com/Serenity0204/CPP_TEMPLATE/blob/master/design.
 - feature 1
 - feature 2
 
+## References
+bitcask: https://riak.com/assets/bitcask-intro.pdf
 
