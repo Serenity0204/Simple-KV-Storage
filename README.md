@@ -1,21 +1,27 @@
+# SimpleKV Storage
 
-# Project Name
-Project Description goes here
+A Persistent Single File key value storage that's built on top of bitcask, it supports template keys and template values.
+The code only consists of header files hence it's easy to integrate into other projects.
 
-* operation 1
-* operation 2
-
+- PUT(KEY, VALUE)
+- REMOVE(KEY)
+- EXISTS(KEY)
+- GET(KEY)
 
 ## Design
-change the repo name:
-Can be found in https://github.com/Serenity0204/CPP_TEMPLATE/blob/master/design.txt
 
+Can be found in https://github.com/Serenity0204/Simple_KV_Storage/blob/master/design.txt
 
 ## Features
 
-- feature 1
-- feature 2
+- persistent storage
+- fast file io
+- quick search in disk
+- O(n) loading time with loading every entry's key vs index into memory and excluding the invalid ones
+- O(log(n)) time removal in memory, and O(1) time removal in disk(appending new entry at the end and marked as removed)
+- O(log(n)) time insertion in memory, and O(1) time insertion in disk with the same reason as removal
+- O(log(n)) time retrieval in memory, and O(1) time retrieval in disk
 
 ## References
-bitcask: https://riak.com/assets/bitcask-intro.pdf
 
+bitcask: https://riak.com/assets/bitcask-intro.pdf
