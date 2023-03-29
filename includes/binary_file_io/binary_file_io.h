@@ -2,10 +2,12 @@
 #define BINARY_FILE_IO_H
 
 #include "../hash_table/hash_table.h"
+#include "../serializer/serializer.h"
 #include "entry.h"
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 enum MODE
@@ -19,17 +21,18 @@ class BinaryFileIO
 private:
     static const string DB_FILE_PATH;
     static const string MERGE_FILE_PATH;
-    size_t _size;
-    void _load_index();
 
 public:
     BinaryFileIO();
     ~BinaryFileIO();
     long long write_file(const Entry& entry, MODE mode = DB_FILE);
     Entry read_file(long long index, MODE mode = DB_FILE);
+    vector<Entry> read_all(MODE mode = DB_FILE);
+
     template <class K>
     void dump_to_merge_file(const HashTable<K, long long>& cache);
-    vector<Entry> read_all(MODE mode = DB_FILE);
+    template <class K>
+    void load_index(vector<HashRecord<K, long long>>& cache, vector<Operations>& operations, MODE mode = DB_FILE);
 };
 
 const string BinaryFileIO::DB_FILE_PATH = "simple_kv_db.data";
@@ -71,10 +74,11 @@ long long BinaryFileIO::write_file(const Entry& entry, MODE mode)
     int key_size = entry._key_size + 1;
     int data_size = entry._data_size + 1;
 
-    // operation,key size,data size
-    file.write(reinterpret_cast<const char*>(&entry._operation), sizeof(entry._operation));
-    file.write(reinterpret_cast<const char*>(&key_size), sizeof(key_size));
-    file.write(reinterpret_cast<const char*>(&data_size), sizeof(data_size));
+    // operation,index,key size,data size
+    file.write(reinterpret_cast<const char*>(&entry._operation), sizeof(Operations));
+    file.write(reinterpret_cast<const char*>(&index), sizeof(long long));
+    file.write(reinterpret_cast<const char*>(&key_size), sizeof(int));
+    file.write(reinterpret_cast<const char*>(&data_size), sizeof(int));
 
     // write the key and data strings to the file.
     file.write(entry._key.c_str(), key_size);
@@ -94,6 +98,7 @@ Entry BinaryFileIO::read_file(long long index, MODE mode)
 
     // read entry from file
     file.read(reinterpret_cast<char*>(&entry._operation), sizeof(Operations));
+    file.read(reinterpret_cast<char*>(&entry._index), sizeof(long long));
     file.read(reinterpret_cast<char*>(&entry._key_size), sizeof(int));
     file.read(reinterpret_cast<char*>(&entry._data_size), sizeof(int));
 
@@ -151,6 +156,7 @@ vector<Entry> BinaryFileIO::read_all(MODE mode)
     {
         Entry entry;
         file.read(reinterpret_cast<char*>(&entry._operation), sizeof(Operations));
+        file.read(reinterpret_cast<char*>(&entry._index), sizeof(long long));
         file.read(reinterpret_cast<char*>(&entry._key_size), sizeof(int));
         file.read(reinterpret_cast<char*>(&entry._data_size), sizeof(int));
 
@@ -177,5 +183,23 @@ vector<Entry> BinaryFileIO::read_all(MODE mode)
     }
 
     return entries;
+}
+
+template <class K>
+void BinaryFileIO::load_index(vector<HashRecord<K, long long>>& cache, vector<Operations>& operations, MODE mode)
+{
+    operations.clear();
+    cache.clear();
+    vector<Entry> entries = this->read_all(mode);
+    for (int i = 0; i < entries.size(); ++i)
+    {
+        string pre_key = entries[i]._key;
+        Operations op = entries[i]._operation;
+        K key = Serializer<K>::deserialize(pre_key);
+        long long index = entries[i]._index;
+        HashRecord<K, long long> record(key, index);
+        cache.push_back(record);
+        operations.push_back(op);
+    }
 }
 #endif // BINARY_FILE_IO_H

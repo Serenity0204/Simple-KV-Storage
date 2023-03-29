@@ -78,7 +78,13 @@ ADD_EXECUTABLE(test_serializer
     ${SOURCE_FILES}
 )
 
+ADD_EXECUTABLE(test_simpleKV
+    _tests/_test_files/test_simpleKV.cpp
+    ${SOURCE_FILES}
+)
+
 TARGET_LINK_LIBRARIES(test_avl gtest)
 TARGET_LINK_LIBRARIES(test_hash gtest)
 TARGET_LINK_LIBRARIES(test_fileIO gtest)
 TARGET_LINK_LIBRARIES(test_serializer gtest)
+TARGET_LINK_LIBRARIES(test_simpleKV gtest)

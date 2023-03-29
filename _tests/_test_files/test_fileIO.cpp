@@ -39,6 +39,7 @@ bool test_fileIO1(bool debug = false)
         indices.push_back(index);
         if (debug) cout << "index:" << index << endl;
     }
+    if (debug) cout << endl;
 
     // read entries from file
     for (int i = 0; i < indices.size(); ++i)
@@ -49,6 +50,7 @@ bool test_fileIO1(bool debug = false)
     }
 
     // real all
+    if (debug) cout << "read all:" << endl;
     vector<Entry> all_entries = IO.read_all();
     for (int i = 0; i < all_entries.size(); ++i)
     {
@@ -82,6 +84,7 @@ bool test_fileIO2(bool debug = false)
         indices.push_back(index);
         if (debug) cout << "index:" << index << endl;
     }
+    if (debug) cout << endl;
 
     // read entries from file
     for (int i = 0; i < indices.size(); ++i)
@@ -92,6 +95,7 @@ bool test_fileIO2(bool debug = false)
     }
 
     // real all
+    if (debug) cout << "read all:" << endl;
     vector<Entry> all_entries = IO.read_all();
     for (int i = 0; i < all_entries.size(); ++i)
     {
@@ -192,6 +196,8 @@ bool test_fileIO4(bool debug = false)
     }
 
     IO.dump_to_merge_file(map);
+
+    if (debug) cout << "read all:" << endl;
     vector<Entry> entries = IO.read_all(MERGE_FILE);
     if (debug)
     {
@@ -206,7 +212,47 @@ bool test_fileIO4(bool debug = false)
     return true;
 }
 
+bool test_fileIO5(bool debug = false)
+{
+    remove("simple_kv_db.merge");
+    remove("simple_kv_db.data");
+
+    vector<Entry> entries = {
+        {"1", "1", INSERT},
+        {"2", "2", DELETE},
+        {"3", "3", INSERT},
+        {"4", "4", DELETE},
+        {"4", "5", INSERT},
+    };
+
+    BinaryFileIO IO;
+    for (const auto& entry : entries)
+    {
+        long long index = IO.write_file(entry);
+        if (debug) cout << "index:" << index << endl;
+    }
+    if (debug) cout << endl;
+
+    vector<HashRecord<int, long long>> cache;
+    cache.clear();
+    vector<Operations> ops;
+    ops.clear();
+    IO.load_index(cache, ops);
+
+    for (int i = 0; i < cache.size(); ++i)
+        if (debug) cout << cache[i] << endl;
+
+    if (debug) cout << endl;
+
+    int size = 5;
+    remove("simple_kv_db.merge");
+    remove("simple_kv_db.data");
+    if (cache.size() != size) return false;
+    return true;
+}
+
 const bool debug = false;
+const bool debug_dangerous = false; // dangerous!
 
 TEST(TEST_FILE_IO, TestFileIO1)
 {
@@ -221,13 +267,19 @@ TEST(TEST_FILE_IO, TestFileIO2)
 
 TEST(TEST_FILE_IO, TestFileIO3)
 {
-    bool success = test_fileIO3(debug);
+    bool success = test_fileIO3(debug_dangerous);
     EXPECT_EQ(true, success);
 }
 
 TEST(TEST_FILE_IO, TestFileIO4)
 {
     bool success = test_fileIO4(debug);
+    EXPECT_EQ(true, success);
+}
+
+TEST(TEST_FILE_IO, TestFileIO5)
+{
+    bool success = test_fileIO5(debug);
     EXPECT_EQ(true, success);
 }
 

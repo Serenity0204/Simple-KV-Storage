@@ -14,15 +14,15 @@ enum Operations
 struct Entry
 {
     // entry format:
-    // _operation _key_size _data_size _key _data
+    // _operation, _index, _key_size, _data_size, _key, _data
 public:
     string _data;
     string _key;
+    long long _index;
     int _key_size;
     int _data_size;
     Operations _operation;
-    Entry();
-    Entry(string key, string data, Operations operation);
+    Entry(string key = "", string data = "", Operations operation = INSERT, long long index = 0);
     ~Entry();
     void set_key(string key);
     void set_data(string data);
@@ -33,18 +33,10 @@ public:
     friend std::ostream& operator<<(std::ostream& outs, const Entry& print_me);
 };
 
-Entry::Entry()
-{
-    this->_data = "";
-    this->_key = "";
-    this->_key_size = 0;
-    this->_data_size = 0;
-    this->_operation = INSERT;
-}
-
-Entry::Entry(string key, string data, Operations operation)
+Entry::Entry(string key, string data, Operations operation, long long index)
 {
     this->_operation = operation;
+    this->_index = index;
     this->set_key(key);
     this->set_data(data);
 }
@@ -68,12 +60,13 @@ void Entry::set_data(string data)
 std::ostream& operator<<(std::ostream& outs, const Entry& print_me)
 {
     outs << "key:" << print_me._key << endl;
-    cout << "key size:" << print_me._key_size << endl;
+    outs << "key size:" << print_me._key_size << endl;
     outs << "data:" << print_me._data << endl;
-    cout << "data size:" << print_me._data_size << endl;
+    outs << "data size:" << print_me._data_size << endl;
     outs << "operation:";
     if (print_me._operation == INSERT) outs << "INSERT" << endl;
     if (print_me._operation == DELETE) outs << "DELETE" << endl;
+    outs << "file index:" << print_me._index << endl;
     return outs;
 }
 
