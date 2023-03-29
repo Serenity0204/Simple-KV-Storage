@@ -8,6 +8,7 @@
 #include <functional>
 #include <iomanip>  // Provides std::setw
 #include <iostream> // Provides std::cout
+#include <vector>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ public:
     // OVERLOAD OPERATOR FUNCTIONS
     template <class X, class Y>
     friend std::ostream& operator<<(std::ostream& outs, const HashTable<X, Y>& hash);
+    vector<HashRecord<K, V>> to_vector() const;
 
 private:
     // MEMBER VARIABLES
@@ -182,6 +184,19 @@ void HashTable<K, V>::_print_hash(std::ostream& outs) const
         outs << std::endl;
     }
     outs << "hashmap size:" << this->size() << endl;
+}
+
+template <class K, class V>
+vector<HashRecord<K, V>> HashTable<K, V>::to_vector() const
+{
+    vector<HashRecord<K, V>> items;
+    items.clear();
+    for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i)
+    {
+        if (this->_data[i].root() == nullptr) continue;
+        vector_inorder(this->_data[i].root(), items);
+    }
+    return items;
 }
 
 #endif // HASH_TABLE_H

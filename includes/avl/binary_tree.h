@@ -5,6 +5,7 @@
 #include <cstdlib>  // Provides NULL, std::size_t
 #include <iomanip>  // Provides std::setw
 #include <iostream> // Provides std::cout
+#include <vector>
 using namespace std;
 
 template <class Item>
@@ -71,6 +72,9 @@ void postorder(Process f, BTNode* node_ptr);
 
 template <class Item>
 void print_inorder(const binary_tree_node<Item>* root);
+
+template <class Item>
+void vector_inorder(const binary_tree_node<Item>* root, vector<Item>& items);
 
 template <class Item>
 void print(binary_tree_node<Item>* node_ptr, int depth = 0);
@@ -301,4 +305,12 @@ void print_inorder(const binary_tree_node<Item>* root)
     print_inorder(root->right());
 }
 
+template <class Item>
+void vector_inorder(const binary_tree_node<Item>* root, vector<Item>& items)
+{
+    if (root == nullptr) return;
+    vector_inorder(root->left(), items);
+    items.push_back(root->data());
+    vector_inorder(root->right(), items);
+}
 #endif // BINARY_TREE_H

@@ -270,6 +270,7 @@ bool test_hash6(bool debug1 = false, bool debug2 = false)
     if (hash.size() != 0) return false;
     return true;
 }
+
 //------------------------------------------------------------------------------
 
 // Lord help me!
@@ -311,6 +312,7 @@ TEST(TEST_HASH, TestHash6)
     bool success = test_hash6(debug1, debug2);
     EXPECT_EQ(success, true);
 }
+
 //------------------------------------------------------------------------------
 
 int main(int argc, char** argv)

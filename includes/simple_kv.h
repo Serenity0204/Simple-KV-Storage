@@ -29,6 +29,7 @@ Simple_KV<K, V>::Simple_KV()
     this->_table = HashTable<K, int>();
 }
 
+// call io.dump_to_merge_file when destructed
 template <class K, class V>
 Simple_KV<K, V>::~Simple_KV()
 {
