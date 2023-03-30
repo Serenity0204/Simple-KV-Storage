@@ -1,6 +1,8 @@
 #include "includes/simple_kv.h"
 #include <iostream>
+#include <string>
 using namespace std;
+
 
 int main(int argc, char* argv[])
 {
@@ -18,8 +20,11 @@ int main(int argc, char* argv[])
     if(!kv.EXISTS(1)) cout << "removed 1 success" << endl;
     kv.PUT(1, 999);
     cout << kv.GET(1) << endl;
+    kv.DISPLAY();
     cout << "success";
     remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db.data");   
     return 0;
 }
+
+

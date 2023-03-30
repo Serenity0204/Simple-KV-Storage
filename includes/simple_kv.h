@@ -79,6 +79,18 @@ void SimpleKV<K, V>::REMOVE(K key)
 template <class K, class V>
 void SimpleKV<K, V>::DISPLAY()
 {
+    vector<HashRecord<K, long long>> all_records = this->_table.to_vector();
+    if(all_records.size() == 0)
+    {
+        cout << "Empty" << endl;
+        return;
+    }
+    for(int i = 0; i < all_records.size(); ++i)
+    {
+        long long index = all_records[i]._value;
+        Entry entry = this->_io.read_file(index);
+        cout << "{key:" << entry._key << ", value:" <<entry._data << "}" << endl;
+    }
 }
 
 template <class K, class V>
