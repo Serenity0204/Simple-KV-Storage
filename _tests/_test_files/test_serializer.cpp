@@ -6,59 +6,21 @@
 //------------------------------------------------------------------------------
 //@TODO: include all files we are testing:
 #include "../../includes/serializer/serializer.h"
-
+#include "../_test_utls/testing_objects.h"
 //------------------------------------------------------------------------------
 
 using namespace std;
 
-// testing helpers
-//------------------------------------------------------------------------------
-class TestObj
-{
-private:
-    int _x;
-    std::string _y;
-    std::string _z;
-
-public:
-    TestObj(int x = 0, string y = "test", string z = "obj") : _x(x), _y(y), _z(z) {}
-    friend std::ostream& operator<<(std::ostream& os, const TestObj& obj)
-    {
-        os << obj._x << " " << obj._y << " " << obj._z;
-        return os;
-    }
-
-    friend std::istream& operator>>(std::istream& is, TestObj& obj)
-    {
-        is >> obj._x >> obj._y >> obj._z;
-        return is;
-    }
-
-    // for testing, not necessary for other use cases
-    friend bool operator==(const TestObj& left, const TestObj& right)
-    {
-        bool x_same = left._x == right._x;
-        bool y_same = left._y == right._y;
-        bool z_same = left._z == right._z;
-        return x_same && y_same && z_same;
-    }
-    friend bool operator!=(const TestObj& left, const TestObj& right)
-    {
-        return !(left == right);
-    }
-};
-//------------------------------------------------------------------------------
-
 // test custom type
 bool test_serializer1(bool debug = false)
 {
-    vector<TestObj> objects;
+    vector<TestObjA> objects;
     vector<string> strings;
     int size = 200;
     for (int i = 0; i < size; ++i)
     {
-        TestObj obj = TestObj(i);
-        string serialized = Serializer<TestObj>::serialize(obj);
+        TestObjA obj = TestObjA(i);
+        string serialized = Serializer<TestObjA>::serialize(obj);
         objects.push_back(obj);
         strings.push_back(serialized);
     }
@@ -66,7 +28,7 @@ bool test_serializer1(bool debug = false)
     EXPECT_TRUE(same_size);
     for (int i = 0; i < size; ++i)
     {
-        TestObj obj = Serializer<TestObj>::deserialize(strings[i]);
+        TestObjA obj = Serializer<TestObjA>::deserialize(strings[i]);
         if (obj != objects[i])
         {
             if (debug)

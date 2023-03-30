@@ -17,8 +17,7 @@ class HashTable
 {
 public:
     // MEMBER CONSTANT
-    // static const std::size_t CAPACITY = 10007;
-    static const std::size_t CAPACITY = 811;
+    static const std::size_t CAPACITY = 10007;
     // CONSTRUCTORS AND DESTRUCTOR
     HashTable();
     HashTable(const HashTable<K, V>& source);
@@ -33,7 +32,7 @@ public:
     // subscript operator
     V& operator[](K key);
     const V& operator[](K key) const;
-
+    bool empty() const { return this->_size == 0; }
     std::size_t size() const { return _size; }
     // OVERLOAD OPERATOR FUNCTIONS
     template <class X, class Y>

@@ -3,11 +3,12 @@ project structure:
     
     --includes // where all of the code reside
       --avl // avl tree implementation
-      --binary_file_io // binary file io for storage entry
-      --hash_table // hash table implementation
+      --binary_file_io // binary file io for storage entries
+      --hash_table // hash table implementation using chained hash(chaining AVL trees)
+      --serializer // serialize data into strings for binary_file_io to write
       --simple_kv.h // header file for simple_kv
 
-    --main.cpp // the main entry of the program
+    --main.cpp // example use case
     --design.txt // project introduction
     --CMakeLists.txt // cmake for this project
 

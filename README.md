@@ -3,10 +3,16 @@
 A Persistent Single File key value storage that's built on top of bitcask, it supports template keys and template values.
 The code only consists of header files hence it's easy to integrate into other projects.
 
+## Support APIs
+
+- CONNECT()
+- CLOSE()
 - PUT(KEY, VALUE)
 - REMOVE(KEY)
 - EXISTS(KEY)
 - GET(KEY)
+- EMPTY()
+- SIZE()
 
 ## Design
 

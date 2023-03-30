@@ -13,10 +13,12 @@ using namespace std;
 
 bool test_fileIO1(bool debug = false)
 {
+    string db = "simple_kv_db.data";
+    string merge = "simple_kv_db.merge";
     remove("simple_kv_db.merge");
     remove("simple_kv_db.data");
 
-    BinaryFileIO IO;
+    BinaryFileIO IO(db, merge);
     vector<Entry> entries = {
         {"hello", "world", INSERT},
         {"apple", "banana", DELETE},
@@ -67,8 +69,10 @@ bool test_fileIO2(bool debug = false)
 {
     remove("simple_kv_db.merge");
     remove("simple_kv_db.data");
+    string db = "simple_kv_db.data";
+    string merge = "simple_kv_db.merge";
+    BinaryFileIO IO(db, merge);
 
-    BinaryFileIO IO;
     vector<Entry> entries = {
         {"1", "1", INSERT},
         {"2", "2", DELETE},
@@ -112,8 +116,10 @@ bool test_fileIO3(bool debug = false)
 {
     remove("simple_kv_db.merge");
     remove("simple_kv_db.data");
+    string db = "simple_kv_db.data";
+    string merge = "simple_kv_db.merge";
+    BinaryFileIO IO(db, merge);
 
-    BinaryFileIO IO;
     vector<Entry> entries;
     int size = 10000;
     for (int i = 0; i < size; ++i) entries.push_back(Entry(to_string(i), to_string(i), INSERT));
@@ -154,7 +160,10 @@ bool test_fileIO4(bool debug = false)
     remove("simple_kv_db.merge");
     remove("simple_kv_db.data");
     HashTable<string, long long> map;
-    BinaryFileIO IO;
+    string db = "simple_kv_db.data";
+    string merge = "simple_kv_db.merge";
+    BinaryFileIO IO(db, merge);
+
     int size = 3;
 
     // binary file data
@@ -224,8 +233,10 @@ bool test_fileIO5(bool debug = false)
         {"4", "4", DELETE},
         {"4", "5", INSERT},
     };
+    string db = "simple_kv_db.data";
+    string merge = "simple_kv_db.merge";
+    BinaryFileIO IO(db, merge);
 
-    BinaryFileIO IO;
     for (const auto& entry : entries)
     {
         long long index = IO.write_file(entry);

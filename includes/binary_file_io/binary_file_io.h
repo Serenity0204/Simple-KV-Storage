@@ -19,11 +19,12 @@ enum MODE
 class BinaryFileIO
 {
 private:
-    static const string DB_FILE_PATH;
-    static const string MERGE_FILE_PATH;
+    string _db_file_path;
+    string _merge_file_path;
 
 public:
-    BinaryFileIO();
+    BinaryFileIO() {}
+    BinaryFileIO(string db_file_path, string merge_file_path);
     ~BinaryFileIO();
     long long write_file(const Entry& entry, MODE mode = DB_FILE);
     Entry read_file(long long index, MODE mode = DB_FILE);
@@ -35,22 +36,22 @@ public:
     void load_index(vector<HashRecord<K, long long>>& cache, vector<Operations>& operations, MODE mode = DB_FILE);
 };
 
-const string BinaryFileIO::DB_FILE_PATH = "simple_kv_db.data";
-const string BinaryFileIO::MERGE_FILE_PATH = "simple_kv_db.merge";
-
-BinaryFileIO::BinaryFileIO()
+BinaryFileIO::BinaryFileIO(string db_file_path, string merge_file_path)
 {
-    ifstream in(BinaryFileIO::DB_FILE_PATH, ios::binary);
+    this->_db_file_path = (db_file_path.length() == 0) ? "simple_kv_db.data" : db_file_path;
+    this->_merge_file_path = (merge_file_path.length() == 0) ? "simple_kv_db.merge" : merge_file_path;
+
+    ifstream in(this->_db_file_path, ios::binary);
     if (!in.good())
     {
-        ofstream out(BinaryFileIO::DB_FILE_PATH, ios::binary);
+        ofstream out(this->_db_file_path, ios::binary);
         out.close();
     }
     in.close();
-    in.open(BinaryFileIO::MERGE_FILE_PATH, ios::binary);
+    in.open(this->_merge_file_path, ios::binary);
     if (!in.good())
     {
-        ofstream out(BinaryFileIO::MERGE_FILE_PATH, ios::binary);
+        ofstream out(this->_merge_file_path, ios::binary);
         out.close();
     }
     in.close();
@@ -63,7 +64,7 @@ BinaryFileIO::~BinaryFileIO()
 long long BinaryFileIO::write_file(const Entry& entry, MODE mode)
 {
     // open the file for binary output, and move the put pointer to the end of the file.
-    string file_path = (mode == DB_FILE) ? BinaryFileIO::DB_FILE_PATH : BinaryFileIO::MERGE_FILE_PATH;
+    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
     fstream file(file_path, ios::out | ios::binary | ios::app);
     file.seekp(0, ios::end);
 
@@ -89,7 +90,7 @@ long long BinaryFileIO::write_file(const Entry& entry, MODE mode)
 
 Entry BinaryFileIO::read_file(long long index, MODE mode)
 {
-    string file_path = (mode == DB_FILE) ? BinaryFileIO::DB_FILE_PATH : BinaryFileIO::MERGE_FILE_PATH;
+    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
     fstream file(file_path, ios::in | ios::out | ios::binary);
     Entry entry;
 
@@ -126,23 +127,28 @@ Entry BinaryFileIO::read_file(long long index, MODE mode)
 
     return entry;
 }
+
+// merge
 template <class K>
 void BinaryFileIO::dump_to_merge_file(const HashTable<K, long long>& cache)
 {
+    // get the current indices
     vector<HashRecord<K, long long>> keys = cache.to_vector();
-
+    // entries
     vector<Entry> entries;
+    // loop through disks and read the entry at specified index
     for (int i = 0; i < keys.size(); ++i)
     {
         Entry entry = this->read_file(keys[i]._value);
         entries.push_back(entry);
     }
+    // write to merge file
     for (int i = 0; i < entries.size(); ++i) this->write_file(entries[i], MERGE_FILE);
 }
 
 vector<Entry> BinaryFileIO::read_all(MODE mode)
 {
-    string file_path = (mode == DB_FILE) ? BinaryFileIO::DB_FILE_PATH : BinaryFileIO::MERGE_FILE_PATH;
+    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
     fstream file(file_path, ios::in | ios::out | ios::binary);
 
     file.seekg(0, ios::end);
