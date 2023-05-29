@@ -6,11 +6,10 @@
 #include <string>
 using namespace std;
 
-
+// the object you want to serialize and deserialize has to overload the << and >> operators as friends
 template <class T>
 struct Serializer
-        {
-    // the object you want to serialize and deserialize has to overload the << and >> operators as friends
+{
 public:
     Serializer() {}
     ~Serializer() {}
