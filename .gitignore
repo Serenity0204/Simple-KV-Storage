@@ -82,5 +82,5 @@ googletest/
 .vs
 out/
 build/other/
-
+.idea
 cmake-build-debug/
