@@ -6,9 +6,10 @@
 #include <string>
 using namespace std;
 
+
 template <class T>
 struct Serializer
-{
+        {
     // the object you want to serialize and deserialize has to overload the << and >> operators as friends
 public:
     Serializer() {}
