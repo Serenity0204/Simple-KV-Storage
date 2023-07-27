@@ -61,27 +61,23 @@ export(TARGETS SimpleKVStorage
 set(INCLUDES_FOLDER includes)
 FILE(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${INCLUDES_FOLDER}/*.cpp")
 
-ADD_EXECUTABLE(main
-    main.cpp
-    ${SOURCE_FILES}
-)
 
-ADD_EXECUTABLE(test_avl
+ADD_EXECUTABLE(test_avl_simpleKV
     _tests/_test_files/test_avl.cpp
     ${SOURCE_FILES}
 )
 
-ADD_EXECUTABLE(test_hash
+ADD_EXECUTABLE(test_hash_simpleKV
     _tests/_test_files/test_hash.cpp
     ${SOURCE_FILES}
 )
 
-ADD_EXECUTABLE(test_fileIO
+ADD_EXECUTABLE(test_fileIO_simpleKV
     _tests/_test_files/test_fileIO.cpp
     ${SOURCE_FILES}
 )
 
-ADD_EXECUTABLE(test_serializer
+ADD_EXECUTABLE(test_serializer_simpleKV
     _tests/_test_files/test_serializer.cpp
     ${SOURCE_FILES}
 )
@@ -91,9 +87,9 @@ ADD_EXECUTABLE(test_simpleKV
     ${SOURCE_FILES}
 )
 
-TARGET_LINK_LIBRARIES(test_avl gtest)
-TARGET_LINK_LIBRARIES(test_hash gtest)
-TARGET_LINK_LIBRARIES(test_fileIO gtest)
-TARGET_LINK_LIBRARIES(test_serializer gtest)
+TARGET_LINK_LIBRARIES(test_avl_simpleKV gtest)
+TARGET_LINK_LIBRARIES(test_hash_simpleKV gtest)
+TARGET_LINK_LIBRARIES(test_fileIO_simpleKV gtest)
+TARGET_LINK_LIBRARIES(test_serializer_simpleKV gtest)
 TARGET_LINK_LIBRARIES(test_simpleKV gtest)
 
