@@ -32,6 +32,7 @@ Can be found in https://github.com/Serenity0204/Simple_KV_Storage/blob/master/de
 ## Installation
 ```
 ## Fetch the content
+include(FetchContent)
 FetchContent_Declare(
   SimpleKVStorage
   GIT_REPOSITORY https://github.com/Serenity0204/Simple-KV-Storage.git
