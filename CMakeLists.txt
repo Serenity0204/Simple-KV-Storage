@@ -96,3 +96,4 @@ TARGET_LINK_LIBRARIES(test_hash gtest)
 TARGET_LINK_LIBRARIES(test_fileIO gtest)
 TARGET_LINK_LIBRARIES(test_serializer gtest)
 TARGET_LINK_LIBRARIES(test_simpleKV gtest)
+
