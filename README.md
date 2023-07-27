@@ -48,7 +48,7 @@ TARGET_LINK_LIBRARIES(main PRIVATE SimpleKVStorage)
 ## Example Usage
 
 ```
-#include "<SimpleKV.h>"
+#include <SimpleKV.h>
 #include <iostream>
 #include <string>
 using namespace std;
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     string merge_path = "merge.merge";
     SimpleKV<int, int> kv(db_path, merge_path);
     bool success = kv.CONNECT();
-    if (!success) return -1;
+    if (!success) return 1;
     kv.PUT(1, 2);
     kv.PUT(1, 3);
     kv.PUT(2, 4);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     cout << "number of records:" << kv.SIZE() << endl;
     cout << "success";
     success = kv.CLOSE();
-    if (!success) return -1;
+    if (!success) return 1;
     return 0;
 }
 ```
