@@ -48,7 +48,7 @@ TARGET_LINK_LIBRARIES(main PRIVATE SimpleKVStorage)
 ## Example Usage
 
 ```
-#include "includes/SimpleKV.h"
+#include "<SimpleKV.h>"
 #include <iostream>
 #include <string>
 using namespace std;
