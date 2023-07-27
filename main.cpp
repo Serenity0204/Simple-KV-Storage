@@ -1,4 +1,4 @@
-#include "includes/simple_kv.h"
+#include "includes/SimpleKV.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -26,6 +26,6 @@ int main(int argc, char* argv[])
     cout << "number of records:" << kv.SIZE() << endl;
     cout << "success";
     success = kv.CLOSE();
-    if (!success) return -1;
+    if (!success) return 1;
     return 0;
 }

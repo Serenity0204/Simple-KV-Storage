@@ -5,7 +5,7 @@
 #include <vector>
 //------------------------------------------------------------------------------
 // Files we are testing:
-#include "../../includes/simple_kv.h"
+#include "../../includes/SimpleKV.h"
 #include "../_test_utls/testing_objects.h"
 //------------------------------------------------------------------------------
 
