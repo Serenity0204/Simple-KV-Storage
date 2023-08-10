@@ -28,8 +28,6 @@ public:
     void DISPLAY();
     bool EMPTY() { return this->_table.empty(); }
     size_t SIZE() { return this->_table.size(); }
-    // only be called when file path duplicates
-    // bool RELOCATE_DB(std::string db_file_path = "simple_kv_db.data", std::string merge_file_path = "simple_kv_db.merge");
 };
 
 template <class K, class V>
@@ -37,16 +35,6 @@ SimpleKV<K, V>::SimpleKV(std::string db_file_path, std::string merge_file_path)
     : _db_file_path(db_file_path), _merge_file_path(merge_file_path)
 {
 }
-
-// // only be called when file path duplicates
-// template <class K, class V>
-// bool SimpleKV<K, V>::RELOCATE_DB(std::string db_file_path, std::string merge_file_path)
-// {
-//     if (db_file_path == merge_file_path) return false;
-//     this->_db_file_path = db_file_path;
-//     this->_merge_file_path = merge_file_path;
-//     return true;
-// }
 
 template <class K, class V>
 bool SimpleKV<K, V>::CONNECT()
