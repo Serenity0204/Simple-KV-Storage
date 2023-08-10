@@ -3,6 +3,7 @@
 #include "binary_file_io/binary_file_io.h"
 #include "map/map.h"
 #include "serializer/serializer.h"
+#include <vector>
 
 template <class K, class V>
 class SimpleKV
@@ -14,20 +15,34 @@ private:
     std::string _merge_file_path;
     // indexing
     Map<K, long long> _table;
-    void _load_index();
+    inline void _load_index() { this->_io.load_index(this->_table, DB_FILE); }
 
 public:
     SimpleKV(std::string db_file_path = "simple_kv_db.data", std::string merge_file_path = "simple_kv_db.merge");
     ~SimpleKV() {}
+
+    // connection
     bool CONNECT();
     bool CLOSE();
+
+    // insert
     void PUT(K key, V value);
-    V GET(K key);
-    bool EXISTS(K key);
+
+    // delete
     void REMOVE(K key);
+
+    // get
+    V GET(K key);
+    std::vector<V> GET_ALL_VALUES();
+    std::vector<K> GET_ALL_KEYS();
+
+    // check
+    bool EXISTS(K key);
+    inline bool EMPTY() { return this->_table.empty(); }
+    inline size_t SIZE() { return this->_table.size(); }
+
+    // print
     void DISPLAY();
-    bool EMPTY() { return this->_table.empty(); }
-    size_t SIZE() { return this->_table.size(); }
 };
 
 template <class K, class V>
@@ -80,6 +95,48 @@ V SimpleKV<K, V>::GET(K key)
 }
 
 template <class K, class V>
+std::vector<V> SimpleKV<K, V>::GET_ALL_VALUES()
+{
+    std::vector<V> result;
+    result.clear();
+    if (this->_table.empty()) return result;
+
+    typename Map<K, long long>::Iterator it;
+    for (it = this->_table.begin(); it != this->_table.end(); ++it)
+    {
+        assert(!it.is_null());
+        Pair<K, long long> p = (*it);
+        long long index = p.value;
+        // loop through disks and read the entry at specified index
+        Entry entry = this->_io.read_file(index);
+        V value = Serializer<V>::deserialize(entry._data);
+        result.push_back(value);
+    }
+    return result;
+}
+
+template <class K, class V>
+std::vector<K> SimpleKV<K, V>::GET_ALL_KEYS()
+{
+    std::vector<K> result;
+    result.clear();
+    if (this->_table.empty()) return result;
+
+    typename Map<K, long long>::Iterator it;
+    for (it = this->_table.begin(); it != this->_table.end(); ++it)
+    {
+        assert(!it.is_null());
+        Pair<K, long long> p = (*it);
+        long long index = p.value;
+        // loop through disks and read the entry at specified index
+        Entry entry = this->_io.read_file(index);
+        K key = Serializer<K>::deserialize(entry._key);
+        result.push_back(key);
+    }
+    return result;
+}
+
+template <class K, class V>
 bool SimpleKV<K, V>::EXISTS(K key)
 {
     return this->_table.contains(key);
@@ -116,12 +173,6 @@ void SimpleKV<K, V>::DISPLAY()
         Entry entry = this->_io.read_file(index);
         std::cout << "{key:" << entry._key << ", value:" << entry._data << "}" << std::endl;
     }
-}
-
-template <class K, class V>
-void SimpleKV<K, V>::_load_index()
-{
-    this->_io.load_index(this->_table);
 }
 
 #endif // SIMPLEKV_H

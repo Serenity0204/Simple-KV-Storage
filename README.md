@@ -1,18 +1,19 @@
 # SimpleKV Storage
 
-A Persistent Single File key value storage that's built on top of bitcask, it supports template keys and template values.
+A Fast and Persistent Single File Key Value Storage that's built on top of bitcask, it supports template keys and template values.
 The code only consists of header files hence it's easy to integrate into other projects.
 
 ## APIs
-
-- CONNECT()
-- CLOSE()
-- PUT(KEY, VALUE)
-- REMOVE(KEY)
-- EXISTS(KEY)
-- GET(KEY)
-- EMPTY()
-- SIZE()
+- CONNECT() // connect to the database
+- CLOSE() // close the database
+- PUT(KEY, VALUE) // insert key: value
+- REMOVE(KEY) // remove by key
+- EXISTS(KEY) // check if key exists
+- GET(KEY) // get the value from key, error if key does not exist
+- GET_ALL_KEYS() // get all of the keys inside the database, will return a vector of key
+- GET_ALL_VALUES() // get all of the values inside the database, will return a vector of value
+- EMPTY() // check if database is empty
+- SIZE() // get the number of entries inside the database
 
 ## Design
 
@@ -29,7 +30,9 @@ Can be found in https://github.com/Serenity0204/Simple_KV_Storage/blob/master/de
 - O(log(n)) time retrieval in memory, and O(1) time retrieval in disk
 
 
-## Installation
+## Installation using CMake
+Include the following inside your CmakeLists.txt
+
 ```
 ## Fetch the content
 include(FetchContent)
@@ -45,12 +48,18 @@ TARGET_LINK_LIBRARIES(main PRIVATE SimpleKVStorage)
 ```
 
 
-## Example Usage
+## Usage
+Make sure the object you want to store overloaded the following operators:
+* operator<<
+* operator>>
+* operator<
 
+## Simple Usecase
 ```
 #include <SimpleKV.h>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -73,6 +82,109 @@ int main(int argc, char* argv[])
     kv.PUT(1, 999);
     cout << "1:" << kv.GET(1) << endl;
     kv.DISPLAY();
+    cout << "number of records:" << kv.SIZE() << endl;
+
+    vector<int> v = kv.GET_ALL();
+    for (int i = 0; i < v.size(); ++i) cout << v[i] << " ";
+    cout << endl;
+    cout << "success";
+    success = kv.CLOSE();
+    if (!success) return 1;
+    return 0;
+}
+```
+
+
+## Complex Usecase
+```
+#include <SimpleKV.h>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+class MyClass
+{
+private:
+    std::vector<int> intVector;
+    std::string myString;
+    int myInt;
+
+public:
+    // Default Constructor
+    MyClass() : myString(""), myInt(0) {}
+
+    // Overloaded Constructor
+    MyClass(const std::vector<int>& vec, const std::string& str, int num)
+        : intVector(vec), myString(str), myInt(num) {}
+
+    // Destructor
+    ~MyClass()
+    {
+    }
+
+    // Overloaded << operator
+    friend std::ostream& operator<<(std::ostream& out, const MyClass& obj)
+    {
+        for (int value : obj.intVector)
+        {
+            out << value << " ";
+        }
+        out << obj.myString << " " << obj.myInt;
+        return out;
+    }
+
+    // Overloaded >> operator
+    friend std::istream& operator>>(std::istream& in, MyClass& obj)
+    {
+        int value;
+        obj.intVector.clear();
+        while (in >> value)
+        {
+            obj.intVector.push_back(value);
+        }
+        in.clear();
+
+        in >> obj.myString;
+        in >> obj.myInt;
+
+        return in;
+    }
+
+    // Overloaded < operator
+    bool operator<(const MyClass& other) const
+    {
+        return myInt < other.myInt;
+    }
+};
+
+int main(int argc, char* argv[])
+{
+    MyClass obj1({1, 2, 3, 4, 5, 6}, "Helloddddd", 422);
+
+    MyClass obj2({1, 2, 3}, "Hello", 42);
+    MyClass obj3({7, 8, 9}, "World qwefqwefqwef qwefqwefwfqweffffffffffffffffffffffff", 100);
+    MyClass obj4({10, 20, 30, 40, 50}, "Goodbye", 555);
+
+    cout << "example use case:" << endl;
+    string db_path = "db.data";
+    string merge_path = "merge.merge";
+    SimpleKV<MyClass, MyClass> kv(db_path, merge_path);
+    bool success = kv.CONNECT();
+    if (!success) return 1;
+    kv.PUT(obj1, obj2);
+    kv.PUT(obj2, obj2);
+    kv.PUT(obj2, obj3);
+    cout << "1:" << kv.GET(obj1) << endl; // should be obj2
+    cout << "2:" << kv.GET(obj2) << endl; // should be obj3
+    kv.REMOVE(obj1);
+
+    if (kv.EXISTS(obj1)) cout << "???" << endl;
+    if (!kv.EXISTS(obj1)) cout << "removed 1 success" << endl;
+    cout << "put (obj1, obj4) into db" << endl;
+    kv.PUT(obj1, obj4);
+    cout << "1:" << kv.GET(obj1) << endl; // should be obj4
+    kv.DISPLAY(); // print out (obj1, obj4), (obj2, obj3)
     cout << "number of records:" << kv.SIZE() << endl;
     cout << "success";
     success = kv.CLOSE();

@@ -1,6 +1,7 @@
 #include "includes/SimpleKV.h"
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -10,7 +11,7 @@ int main(int argc, char* argv[])
     string merge_path = "mergemain.merge";
     SimpleKV<int, int> kv(db_path, merge_path);
     bool success = kv.CONNECT();
-    if (!success) return -1;
+    if (!success) return 1;
     kv.PUT(1, 2);
     kv.PUT(1, 3);
     kv.PUT(2, 4);
@@ -24,8 +25,12 @@ int main(int argc, char* argv[])
     cout << "1:" << kv.GET(1) << endl;
     kv.DISPLAY();
     cout << "number of records:" << kv.SIZE() << endl;
+
+    vector<int> v = kv.GET_ALL_VALUES();
+    for (int i = 0; i < v.size(); ++i) cout << v[i] << " ";
+    cout << endl;
     cout << "success";
     success = kv.CLOSE();
-    if (!success) return -1;
+    if (!success) return 1;
     return 0;
 }
