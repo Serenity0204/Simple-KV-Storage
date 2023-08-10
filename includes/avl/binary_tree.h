@@ -6,7 +6,6 @@
 #include <iomanip>  // Provides std::setw
 #include <iostream> // Provides std::cout
 #include <vector>
-using namespace std;
 
 template <class Item>
 class binary_tree_node
@@ -46,7 +45,7 @@ public:
     {
         int left = this->left_field != nullptr ? this->left_field->update_entire_tree_height() : -1;
         int right = this->right_field != nullptr ? this->right_field->update_entire_tree_height() : -1;
-        this->tree_height = max(left, right) + 1;
+        this->tree_height = std::max(left, right) + 1;
         return this->tree_height;
     }
     // OVERLOAD OPERATOR FUNCTIONS
@@ -74,7 +73,7 @@ template <class Item>
 void print_inorder(const binary_tree_node<Item>* root);
 
 template <class Item>
-void vector_inorder(const binary_tree_node<Item>* root, vector<Item>& items);
+void vector_inorder(const binary_tree_node<Item>* root, std::vector<Item>& items);
 
 template <class Item>
 void print(binary_tree_node<Item>* node_ptr, int depth = 0);
@@ -152,7 +151,7 @@ int binary_tree_node<Item>::update_height()
 {
     int leftH = left_field ? left_field->tree_height : -1;
     int rightH = right_field ? right_field->tree_height : -1;
-    tree_height = max(leftH, rightH) + 1;
+    tree_height = std::max(leftH, rightH) + 1;
     return tree_height;
 }
 
@@ -231,13 +230,13 @@ void print(binary_tree_node<Item>* node_ptr, int depth)
 {
     if (node_ptr == nullptr)
     {
-        cout << "null" << endl;
+        std::cout << "null" << std::endl;
         return;
     }
     if (node_ptr->right() != nullptr) print(node_ptr->right(), depth + 1);
     for (int i = 0; i < depth; ++i)
-        cout << "    ";
-    cout << *node_ptr << endl;
+        std::cout << "    ";
+    std::cout << *node_ptr << std::endl;
     if (node_ptr->left() != nullptr) print(node_ptr->left(), depth + 1);
 }
 
@@ -246,13 +245,13 @@ void print_debug(binary_tree_node<Item>* node_ptr, int depth)
 {
     if (node_ptr == nullptr)
     {
-        cout << "null" << endl;
+        std::cout << "null" << std::endl;
         return;
     }
     if (node_ptr->right() != nullptr) print_debug(node_ptr->right(), depth + 1);
     for (int i = 0; i < depth; ++i)
-        cout << "        ";
-    cout << *node_ptr << "(h:" << node_ptr->height() << ",bf:" << node_ptr->balance_factor() << ")" << endl;
+        std::cout << "        ";
+    std::cout << *node_ptr << "(h:" << node_ptr->height() << ",bf:" << node_ptr->balance_factor() << ")" << std::endl;
     if (node_ptr->left() != nullptr) print_debug(node_ptr->left(), depth + 1);
 }
 
@@ -301,12 +300,12 @@ void print_inorder(const binary_tree_node<Item>* root)
 {
     if (root == nullptr) return;
     print_inorder(root->left());
-    cout << root->data();
+    std::cout << root->data();
     print_inorder(root->right());
 }
 
 template <class Item>
-void vector_inorder(const binary_tree_node<Item>* root, vector<Item>& items)
+void vector_inorder(const binary_tree_node<Item>* root, std::vector<Item>& items)
 {
     if (root == nullptr) return;
     vector_inorder(root->left(), items);

@@ -2,7 +2,7 @@
 #define AVL_TREE_FUNCTIONS_H
 
 #include "binary_tree.h"
-using namespace std;
+
 
 // NON-MEMBER FUNCTIONS for the AVL<Item>:
 template <class Item>

@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-using namespace std;
 
 enum Operations
 {
@@ -16,16 +15,16 @@ struct Entry
     // entry format:
     // _operation, _index, _key_size, _data_size, _key, _data
 public:
-    string _data;
-    string _key;
+    std::string _data;
+    std::string _key;
     long long _index;
     int _key_size;
     int _data_size;
     Operations _operation;
-    Entry(string key = "", string data = "", Operations operation = INSERT, long long index = 0);
+    Entry(std::string key = "", std::string data = "", Operations operation = INSERT, long long index = 0);
     ~Entry();
-    void set_key(string key);
-    void set_data(string data);
+    void set_key(std::string key);
+    void set_data(std::string data);
 
     // friends
     friend bool operator==(const Entry& left, const Entry& right);
@@ -33,7 +32,7 @@ public:
     friend std::ostream& operator<<(std::ostream& outs, const Entry& print_me);
 };
 
-Entry::Entry(string key, string data, Operations operation, long long index)
+Entry::Entry(std::string key, std::string data, Operations operation, long long index)
 {
     this->_operation = operation;
     this->_index = index;
@@ -45,13 +44,13 @@ Entry::~Entry()
 {
 }
 
-void Entry::set_key(string key)
+void Entry::set_key(std::string key)
 {
     this->_key = key;
     this->_key_size = key.length();
 }
 
-void Entry::set_data(string data)
+void Entry::set_data(std::string data)
 {
     this->_data = data;
     this->_data_size = data.length();
@@ -59,14 +58,14 @@ void Entry::set_data(string data)
 
 std::ostream& operator<<(std::ostream& outs, const Entry& print_me)
 {
-    outs << "key:" << print_me._key << endl;
-    outs << "key size:" << print_me._key_size << endl;
-    outs << "data:" << print_me._data << endl;
-    outs << "data size:" << print_me._data_size << endl;
+    outs << "key:" << print_me._key << std::endl;
+    outs << "key size:" << print_me._key_size << std::endl;
+    outs << "data:" << print_me._data << std::endl;
+    outs << "data size:" << print_me._data_size << std::endl;
     outs << "operation:";
-    if (print_me._operation == INSERT) outs << "INSERT" << endl;
-    if (print_me._operation == DELETE) outs << "DELETE" << endl;
-    outs << "file index:" << print_me._index << endl;
+    if (print_me._operation == INSERT) outs << "INSERT" << std::endl;
+    if (print_me._operation == DELETE) outs << "DELETE" << std::endl;
+    outs << "file index:" << print_me._index << std::endl;
     return outs;
 }
 

@@ -2,7 +2,7 @@
 #define HASH_RECORD_H
 
 #include <iostream>
-using namespace std;
+
 
 template <class K, class V>
 struct HashRecord

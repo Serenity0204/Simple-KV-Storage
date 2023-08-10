@@ -10,8 +10,6 @@
 #include <iostream> // Provides std::cout
 #include <vector>
 
-using namespace std;
-
 template <class K, class V>
 class HashTable
 {
@@ -37,7 +35,7 @@ public:
     // OVERLOAD OPERATOR FUNCTIONS
     template <class X, class Y>
     friend std::ostream& operator<<(std::ostream& outs, const HashTable<X, Y>& hash);
-    vector<HashRecord<K, V>> to_vector() const;
+    std::vector<HashRecord<K, V>> to_vector() const;
 
 private:
     // MEMBER VARIABLES
@@ -182,13 +180,13 @@ void HashTable<K, V>::_print_hash(std::ostream& outs) const
         print_inorder(this->_data[i].root());
         outs << std::endl;
     }
-    outs << "hashmap size:" << this->size() << endl;
+    outs << "hashmap size:" << this->size() << std::endl;
 }
 
 template <class K, class V>
-vector<HashRecord<K, V>> HashTable<K, V>::to_vector() const
+std::vector<HashRecord<K, V>> HashTable<K, V>::to_vector() const
 {
-    vector<HashRecord<K, V>> items;
+    std::vector<HashRecord<K, V>> items;
     items.clear();
     for (int i = 0; i < HashTable<K, V>::CAPACITY; ++i)
     {

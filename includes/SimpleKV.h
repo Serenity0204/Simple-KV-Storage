@@ -1,9 +1,9 @@
-#ifndef SIMPLE_KV_H
-#define SIMPLE_KV_H
+#ifndef SIMPLEKV_H
+#define SIMPLEKV_H
 #include "binary_file_io/binary_file_io.h"
 #include "hash_table/hash_table.h"
 #include "serializer/serializer.h"
-using namespace std;
+
 
 template <class K, class V>
 class SimpleKV
@@ -11,14 +11,14 @@ class SimpleKV
 private:
     // disk io
     BinaryFileIO _io;
-    string _db_file_path;
-    string _merge_file_path;
+    std::string _db_file_path;
+    std::string _merge_file_path;
     // indexing
     HashTable<K, long long> _table;
     void _load_index();
 
 public:
-    SimpleKV(string db_file_path = "simple_kv_db.data", string merge_file_path = "simple_kv_db.merge");
+    SimpleKV(string db_file_path = "simple_kv_db.data", std::string merge_file_path = "simple_kv_db.merge");
     ~SimpleKV() {}
     bool CONNECT();
     bool CLOSE();
@@ -30,11 +30,11 @@ public:
     bool EMPTY() { return this->_table.empty(); }
     size_t SIZE() { return this->_table.size(); }
     // only be called when file path duplicates
-    bool RELOCATE_DB(string db_file_path = "simple_kv_db.data", string merge_file_path = "simple_kv_db.merge");
+    bool RELOCATE_DB(string db_file_path = "simple_kv_db.data", std::string merge_file_path = "simple_kv_db.merge");
 };
 
 template <class K, class V>
-SimpleKV<K, V>::SimpleKV(string db_file_path, string merge_file_path)
+SimpleKV<K, V>::SimpleKV(std::string db_file_path, std::string merge_file_path)
     : _db_file_path(db_file_path), _merge_file_path(merge_file_path)
 {
 }
@@ -147,4 +147,4 @@ void SimpleKV<K, V>::_load_index()
     }
 }
 
-#endif // SIMPLE_KV_H
+#endif // SIMPLEKV_H

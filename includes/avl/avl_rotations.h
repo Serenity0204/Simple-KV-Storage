@@ -2,7 +2,7 @@
 #define AVL_ROTATIONS_H
 
 #include "binary_tree.h"
-using namespace std;
+
 
 // ROTATION FUNCTIONS for the AVL<Item>
 // ---------------- ROTATIONS ----------------
