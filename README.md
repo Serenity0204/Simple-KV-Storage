@@ -49,10 +49,15 @@ TARGET_LINK_LIBRARIES(main PRIVATE SimpleKVStorage)
 
 
 ## Usage
-Make sure the object you want to store overloaded the following operators:
+Make sure the object you want to store overloaded the following operators
 * operator<<
 * operator>>
-* operator<
+* operator<  
+
+## Limitations
+* The serialization/deserialization are highly dependent on operator<< and operator>>, so you have to sacrifice the usage of these 2 operators.
+* If you have a really complex object as key/value, the definition of operator<< and operator>> will become too complex and you have to make sure the I/O process of the chosen object will produce the correct values. 
+
 
 ## Simple Usecase
 ```
@@ -130,7 +135,10 @@ public:
         {
             out << value << " ";
         }
-        out << obj.myString << " " << obj.myInt;
+        out << endl;
+        out << obj.myString;
+        out << endl;
+        out << obj.myInt;
         return out;
     }
 
@@ -144,19 +152,32 @@ public:
             obj.intVector.push_back(value);
         }
         in.clear();
-
-        in >> obj.myString;
+        getline(in, obj.myString);
         in >> obj.myInt;
 
         return in;
     }
 
     // Overloaded < operator
-    bool operator<(const MyClass& other) const
+    friend bool operator<(const MyClass& self, const MyClass& other)
     {
-        return myInt < other.myInt;
+        return (self.myInt < other.myInt);
     }
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& vec)
+{
+    out << "[";
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        out << vec[i];
+        if (i < vec.size() - 1)
+            out << ", ";
+    }
+    out << "]";
+    return out;
+}
 
 int main(int argc, char* argv[])
 {
@@ -175,6 +196,7 @@ int main(int argc, char* argv[])
     kv.PUT(obj1, obj2);
     kv.PUT(obj2, obj2);
     kv.PUT(obj2, obj3);
+    kv.PUT(obj3, obj3);
     cout << "1:" << kv.GET(obj1) << endl; // should be obj2
     cout << "2:" << kv.GET(obj2) << endl; // should be obj3
     kv.REMOVE(obj1);
@@ -184,8 +206,13 @@ int main(int argc, char* argv[])
     cout << "put (obj1, obj4) into db" << endl;
     kv.PUT(obj1, obj4);
     cout << "1:" << kv.GET(obj1) << endl; // should be obj4
-    kv.DISPLAY(); // print out (obj1, obj4), (obj2, obj3)
+    kv.DISPLAY();                         // print out (obj1, obj4), (obj2, obj3) (obj3, obj3)
     cout << "number of records:" << kv.SIZE() << endl;
+    cout << "All keys:" << endl;
+    cout << kv.GET_ALL_KEYS() << endl; // obj1, obj2, obj3
+    cout << "All values:" << endl;
+    cout << kv.GET_ALL_VALUES() << endl; // obj4, obj3, obj3
+
     cout << "success";
     success = kv.CLOSE();
     if (!success) return 1;
