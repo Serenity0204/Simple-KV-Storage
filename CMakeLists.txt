@@ -44,15 +44,6 @@ if(BUILD_TESTS)
     set(INCLUDES_FOLDER includes)
     FILE(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${INCLUDES_FOLDER}/*.cpp")
 
-    ADD_EXECUTABLE(test_avl
-        _tests/_test_files/test_avl.cpp
-        ${SOURCE_FILES}
-    )
-
-    ADD_EXECUTABLE(test_hash
-        _tests/_test_files/test_hash.cpp
-        ${SOURCE_FILES}
-    )
 
     ADD_EXECUTABLE(test_fileIO
         _tests/_test_files/test_fileIO.cpp
@@ -64,6 +55,14 @@ if(BUILD_TESTS)
         ${SOURCE_FILES}
     )
 
+    ADD_EXECUTABLE(test_bplustree
+        _tests/_test_files/test_bplustree.cpp
+        ${SOURCE_FILES}
+    )
+    ADD_EXECUTABLE(test_map
+        _tests/_test_files/test_map.cpp
+        ${SOURCE_FILES}
+    )
     ADD_EXECUTABLE(test_simpleKV
         _tests/_test_files/test_simpleKV.cpp
         ${SOURCE_FILES}
@@ -72,10 +71,11 @@ if(BUILD_TESTS)
         main.cpp
         ${SOURCE_FILES}
     )
-    TARGET_LINK_LIBRARIES(test_avl gtest)
-    TARGET_LINK_LIBRARIES(test_hash gtest)
+    
     TARGET_LINK_LIBRARIES(test_fileIO gtest)
     TARGET_LINK_LIBRARIES(test_serializer gtest)
+    TARGET_LINK_LIBRARIES(test_bplustree gtest)
+    TARGET_LINK_LIBRARIES(test_map gtest)
     TARGET_LINK_LIBRARIES(test_simpleKV gtest)
     TARGET_LINK_LIBRARIES(main gtest)
 endif()

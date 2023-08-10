@@ -6,8 +6,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     cout << "example use case:" << endl;
-    string db_path = "db.data";
-    string merge_path = "merge.merge";
+    string db_path = "dbmain.data";
+    string merge_path = "mergemain.merge";
     SimpleKV<int, int> kv(db_path, merge_path);
     bool success = kv.CONNECT();
     if (!success) return -1;

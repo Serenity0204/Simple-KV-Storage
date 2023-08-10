@@ -6,17 +6,17 @@
 //------------------------------------------------------------------------------
 // Files we are testing:
 #include "../../includes/binary_file_io/binary_file_io.h"
-#include "../../includes/hash_table/hash_table.h"
+#include "../../includes/map/map.h"
 //------------------------------------------------------------------------------
 
 using namespace std;
 
 bool test_fileIO1(bool debug = false)
 {
-    string db = "simple_kv_db.data";
-    string merge = "simple_kv_db.merge";
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    string db = "simple_kv_db1.data";
+    string merge = "simple_kv_db1.merge";
+    remove("simple_kv_db1.merge");
+    remove("simple_kv_db1.data");
 
     BinaryFileIO IO(db, merge);
     vector<Entry> entries = {
@@ -60,17 +60,17 @@ bool test_fileIO1(bool debug = false)
         if (debug) cout << all_entries[i] << endl;
     }
 
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db1.merge");
+    remove("simple_kv_db1.data");
     return true;
 }
 
 bool test_fileIO2(bool debug = false)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
-    string db = "simple_kv_db.data";
-    string merge = "simple_kv_db.merge";
+    remove("simple_kv_db2.merge");
+    remove("simple_kv_db2.data");
+    string db = "simple_kv_db2.data";
+    string merge = "simple_kv_db2.merge";
     BinaryFileIO IO(db, merge);
 
     vector<Entry> entries = {
@@ -107,17 +107,17 @@ bool test_fileIO2(bool debug = false)
         if (debug) cout << all_entries[i] << endl;
     }
 
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db2.merge");
+    remove("simple_kv_db2.data");
     return true;
 }
 
 bool test_fileIO3(bool debug = false)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
-    string db = "simple_kv_db.data";
-    string merge = "simple_kv_db.merge";
+    remove("simple_kv_db3.merge");
+    remove("simple_kv_db3.data");
+    string db = "simple_kv_db3.data";
+    string merge = "simple_kv_db3.merge";
     BinaryFileIO IO(db, merge);
 
     vector<Entry> entries;
@@ -149,19 +149,19 @@ bool test_fileIO3(bool debug = false)
         if (debug) cout << all_entries[i] << endl;
     }
 
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db3.merge");
+    remove("simple_kv_db3.data");
     return true;
 }
 
 // test dump
 bool test_fileIO4(bool debug = false)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
-    HashTable<string, long long> map;
-    string db = "simple_kv_db.data";
-    string merge = "simple_kv_db.merge";
+    remove("simple_kv_db4.merge");
+    remove("simple_kv_db4.data");
+    Map<string, long long> map;
+    string db = "simple_kv_db4.data";
+    string merge = "simple_kv_db4.merge";
     BinaryFileIO IO(db, merge);
 
     int size = 3;
@@ -196,13 +196,7 @@ bool test_fileIO4(bool debug = false)
         if (3 <= i && i <= 5) map.insert("ok2", indices[i]);
         if (6 <= i && i <= 8) map.insert("ok3", indices[i]);
     }
-    vector<HashRecord<string, long long>> records = map.to_vector();
-    if (debug)
-    {
-        cout << "vector records:" << endl;
-        for (int i = 0; i < records.size(); ++i) cout << records[i] << endl;
-        cout << endl;
-    }
+
 
     IO.dump_to_merge_file(map);
 
@@ -216,15 +210,15 @@ bool test_fileIO4(bool debug = false)
     }
     if (entries.size() != size) return false;
 
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db4.merge");
+    remove("simple_kv_db4.data");
     return true;
 }
 
 bool test_fileIO5(bool debug = false)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db5.merge");
+    remove("simple_kv_db5.data");
 
     vector<Entry> entries = {
         {"1", "1", INSERT},
@@ -233,8 +227,8 @@ bool test_fileIO5(bool debug = false)
         {"4", "4", DELETE},
         {"4", "5", INSERT},
     };
-    string db = "simple_kv_db.data";
-    string merge = "simple_kv_db.merge";
+    string db = "simple_kv_db5.data";
+    string merge = "simple_kv_db5.merge";
     BinaryFileIO IO(db, merge);
 
     for (const auto& entry : entries)
@@ -244,20 +238,13 @@ bool test_fileIO5(bool debug = false)
     }
     if (debug) cout << endl;
 
-    vector<HashRecord<int, long long>> cache;
-    cache.clear();
-    vector<Operations> ops;
-    ops.clear();
-    IO.load_index(cache, ops);
+    Map<int, long long> cache;
+    IO.load_index(cache);
 
-    for (int i = 0; i < cache.size(); ++i)
-        if (debug) cout << cache[i] << endl;
 
-    if (debug) cout << endl;
-
-    int size = 5;
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    int size = 3;
+    remove("simple_kv_db5.merge");
+    remove("simple_kv_db5.data");
     if (cache.size() != size) return false;
     return true;
 }

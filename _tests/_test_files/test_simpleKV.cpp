@@ -13,25 +13,41 @@ using namespace std;
 
 bool test_simpleKV1(bool debug)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db1.merge");
+    remove("simple_kv_db1.data");
     SimpleKV<string, string> kv;
     kv.CONNECT();
 
     EXPECT_FALSE(kv.EXISTS(OPTIONS[0]));
     kv.PUT(OPTIONS[0], OPTIONS[1]);
     bool check = kv.EXISTS(OPTIONS[0]);
-    if (!check) return false;
+    if (!check)
+    {
+        cout << "Exists 1 failed" << endl;
+        return false;
+    }
     string val = kv.GET(OPTIONS[0]);
-    if (val != OPTIONS[1]) return false;
+    if (val != OPTIONS[1])
+    {
+        cout << "Value 1 error" << endl;
+        return false;
+    }
     // putting same key but different value
     kv.PUT(OPTIONS[0], OPTIONS[2]);
     check = kv.EXISTS(OPTIONS[0]);
-    if (!check) return false;
+    if (!check)
+    {
+        cout << "Exists 2 failed" << endl;
+        return false;
+    }
     val = kv.GET(OPTIONS[0]);
-    if (val != OPTIONS[2]) return false;
+    if (val != OPTIONS[2])
+    {
+        cout << "Value 2 error" << endl;
+        return false;
+    }
 
-    // removal
+    // // removal
     kv.REMOVE(OPTIONS[0]);
     check = kv.EXISTS(OPTIONS[0]);
     EXPECT_FALSE(check);
@@ -40,16 +56,16 @@ bool test_simpleKV1(bool debug)
 
     kv.CLOSE();
 
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db1.merge");
+    remove("simple_kv_db1.data");
     return true;
 }
 
 // test load
 bool test_simpleKV_stress1(bool debug)
 {
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db2.merge");
+    remove("simple_kv_db2.data");
     SimpleKV<int, int> kv;
     kv.CONNECT();
     int size = 10000;
@@ -61,16 +77,16 @@ bool test_simpleKV_stress1(bool debug)
         if (val != i * 2) return false;
     }
     kv.CLOSE();
-    remove("simple_kv_db.merge");
-    remove("simple_kv_db.data");
+    remove("simple_kv_db2.merge");
+    remove("simple_kv_db2.data");
     return true;
 }
 
 // test merge
 bool test_simpleKV_merge1(bool debug)
 {
-    string db_file_path = "test_db.data";
-    string merge_file_path = "test_db.merge";
+    string db_file_path = "test_db.data3";
+    string merge_file_path = "test_db.merge3";
     SimpleKV<int, int> kv(db_file_path, merge_file_path);
     if (!kv.CONNECT())
     {
@@ -187,7 +203,6 @@ bool test_simpleKV_objects1(bool debug)
     return true;
 }
 
-
 // test objects key value
 bool test_simpleKV_objects2(bool debug)
 {
@@ -260,7 +275,6 @@ bool test_simpleKV_objects2(bool debug)
     }
     return true;
 }
-
 
 const bool debug = false;
 TEST(TEST_SIMPLEKV, TestSimpleKV1)

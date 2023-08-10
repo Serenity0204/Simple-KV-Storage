@@ -1,14 +1,13 @@
 #ifndef BINARY_FILE_IO_H
 #define BINARY_FILE_IO_H
 
-#include "../hash_table/hash_table.h"
+#include "../map/map.h"
 #include "../serializer/serializer.h"
 #include "entry.h"
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
-using namespace std;
 
 enum MODE
 {
@@ -19,39 +18,39 @@ enum MODE
 class BinaryFileIO
 {
 private:
-    string _db_file_path;
-    string _merge_file_path;
+    std::string _db_file_path;
+    std::string _merge_file_path;
 
 public:
     BinaryFileIO() {}
-    BinaryFileIO(string db_file_path, string merge_file_path);
+    BinaryFileIO(std::string db_file_path, std::string merge_file_path);
     ~BinaryFileIO();
     long long write_file(const Entry& entry, MODE mode = DB_FILE);
     Entry read_file(long long index, MODE mode = DB_FILE);
-    vector<Entry> read_all(MODE mode = DB_FILE);
+    std::vector<Entry> read_all(MODE mode = DB_FILE);
 
     template <class K>
-    void dump_to_merge_file(const HashTable<K, long long>& cache);
+    void dump_to_merge_file(Map<K, long long>& cache);
     template <class K>
-    void load_index(vector<HashRecord<K, long long>>& cache, vector<Operations>& operations, MODE mode = DB_FILE);
+    void load_index(Map<K, long long>& cache, MODE mode = DB_FILE);
 };
 
-BinaryFileIO::BinaryFileIO(string db_file_path, string merge_file_path)
+BinaryFileIO::BinaryFileIO(std::string db_file_path, std::string merge_file_path)
 {
     this->_db_file_path = (db_file_path.length() == 0) ? "simple_kv_db.data" : db_file_path;
     this->_merge_file_path = (merge_file_path.length() == 0) ? "simple_kv_db.merge" : merge_file_path;
 
-    ifstream in(this->_db_file_path, ios::binary);
+    std::ifstream in(this->_db_file_path, std::ios::binary);
     if (!in.good())
     {
-        ofstream out(this->_db_file_path, ios::binary);
+        std::ofstream out(this->_db_file_path, std::ios::binary);
         out.close();
     }
     in.close();
-    in.open(this->_merge_file_path, ios::binary);
+    in.open(this->_merge_file_path, std::ios::binary);
     if (!in.good())
     {
-        ofstream out(this->_merge_file_path, ios::binary);
+        std::ofstream out(this->_merge_file_path, std::ios::binary);
         out.close();
     }
     in.close();
@@ -64,9 +63,9 @@ BinaryFileIO::~BinaryFileIO()
 long long BinaryFileIO::write_file(const Entry& entry, MODE mode)
 {
     // open the file for binary output, and move the put pointer to the end of the file.
-    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
-    fstream file(file_path, ios::out | ios::binary | ios::app);
-    file.seekp(0, ios::end);
+    std::string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
+    std::fstream file(file_path, std::ios::out | std::ios::binary | std::ios::app);
+    file.seekp(0, std::ios::end);
 
     // get the index at which the entry was written.
     long long index = file.tellg();
@@ -90,8 +89,8 @@ long long BinaryFileIO::write_file(const Entry& entry, MODE mode)
 
 Entry BinaryFileIO::read_file(long long index, MODE mode)
 {
-    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
-    fstream file(file_path, ios::in | ios::out | ios::binary);
+    std::string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
+    std::fstream file(file_path, std::ios::in | std::ios::out | std::ios::binary);
     Entry entry;
 
     // move file pointer to the specified index
@@ -130,32 +129,38 @@ Entry BinaryFileIO::read_file(long long index, MODE mode)
 
 // merge
 template <class K>
-void BinaryFileIO::dump_to_merge_file(const HashTable<K, long long>& cache)
+void BinaryFileIO::dump_to_merge_file(Map<K, long long>& cache)
 {
-    // get the current indices
-    vector<HashRecord<K, long long>> keys = cache.to_vector();
     // entries
-    vector<Entry> entries;
-    // loop through disks and read the entry at specified index
-    for (int i = 0; i < keys.size(); ++i)
+    std::vector<Entry> entries;
+
+    // get the current indices
+    typename Map<K, long long>::Iterator it;
+    if (cache.empty()) return;
+    for (it = cache.begin(); it != cache.end(); ++it)
     {
-        Entry entry = this->read_file(keys[i]._value);
+        assert(!it.is_null());
+        Pair<K, long long> p = (*it);
+        long long index = p.value;
+        // read the entry at specified index
+        Entry entry = this->read_file(index);
         entries.push_back(entry);
     }
+
     // write to merge file
     for (int i = 0; i < entries.size(); ++i) this->write_file(entries[i], MERGE_FILE);
 }
 
-vector<Entry> BinaryFileIO::read_all(MODE mode)
+std::vector<Entry> BinaryFileIO::read_all(MODE mode)
 {
-    string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
-    fstream file(file_path, ios::in | ios::out | ios::binary);
+    std::string file_path = (mode == DB_FILE) ? this->_db_file_path : this->_merge_file_path;
+    std::fstream file(file_path, std::ios::in | std::ios::out | std::ios::binary);
 
-    file.seekg(0, ios::end);
+    file.seekg(0, std::ios::end);
     int file_size = file.tellg();
-    file.seekg(0, ios::beg);
+    file.seekg(0, std::ios::beg);
 
-    vector<Entry> entries;
+    std::vector<Entry> entries;
     entries.clear();
 
     while (file.tellg() < file_size)
@@ -192,20 +197,18 @@ vector<Entry> BinaryFileIO::read_all(MODE mode)
 }
 
 template <class K>
-void BinaryFileIO::load_index(vector<HashRecord<K, long long>>& cache, vector<Operations>& operations, MODE mode)
+void BinaryFileIO::load_index(Map<K, long long>& cache, MODE mode)
 {
-    operations.clear();
-    cache.clear();
-    vector<Entry> entries = this->read_all(mode);
+    std::vector<Entry> entries = this->read_all(mode);
     for (int i = 0; i < entries.size(); ++i)
     {
-        string pre_key = entries[i]._key;
+        std::string pre_key = entries[i]._key;
         Operations op = entries[i]._operation;
         K key = Serializer<K>::deserialize(pre_key);
         long long index = entries[i]._index;
-        HashRecord<K, long long> record(key, index);
-        cache.push_back(record);
-        operations.push_back(op);
+        if (op == INSERT) cache.insert(key, index);
+        if (op == DELETE) cache.erase(key);
     }
 }
+
 #endif // BINARY_FILE_IO_H
