@@ -1,6 +1,6 @@
 # SimpleKV Storage
 
-A Fast and Persistent Single File Key Value Storage that's built on top of bitcask, it supports template keys and template values.
+A Fast and Persistent Header Files Only Key-Value Storage that's built on top of bitcask, it supports template keys and template values.
 The code only consists of header files hence it's easy to integrate into other projects.
 
 ## APIs
