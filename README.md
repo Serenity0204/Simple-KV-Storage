@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     kv.DISPLAY();
     cout << "number of records:" << kv.SIZE() << endl;
 
-    vector<int> v = kv.GET_ALL();
+    vector<int> v = kv.GET_ALL_KEYS();
     for (int i = 0; i < v.size(); ++i) cout << v[i] << " ";
     cout << endl;
     cout << "success";
